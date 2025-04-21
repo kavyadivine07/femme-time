@@ -73,7 +73,7 @@ const userSchema= new Schema({
         },
         searchOn:{
             typeDate:{
-                type:Date.now()
+                type:Date
             }
         }
     }]
