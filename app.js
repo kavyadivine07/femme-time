@@ -1,6 +1,7 @@
 const express = require("express")
 const path = require("path")
 const session= require("express-session")
+const passport = require("./config/passport")
 
 const env= require("dotenv").config()
 const db= require("./config/db")
@@ -15,17 +16,19 @@ app.use(express.urlencoded({extended:true}))
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave:false,
-    saveUninitialized:true,
+    saveUninitialized:false,
     cookie:{
         secure:false,
         httpOnly:true,
         maxAge:72*60*60*1000
     }
 }))
+app.use(passport.initialize())
+app.use(passport.session())
 
-app.use((req,res,next)=>{
-    res.set('catche-control','no-store')
-})
+// app.use((req,res,next)=>{
+//     res.set('catche-control','no-store')
+// })
 
 
 app.set("view engine","ejs")
