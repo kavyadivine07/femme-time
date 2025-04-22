@@ -23,7 +23,7 @@ const loadHomepage= async (req,res)=>{
             res.render("home",{user:userData})
         }else{
        
-            return res.render("home")
+            return res.render("home",{user:null})
         }
        
     }catch(error){
