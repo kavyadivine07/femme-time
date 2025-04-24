@@ -41,7 +41,7 @@ color:{
     required:true
 },
 productImage:{
-    type:[string],
+    type:String,
     required:true
 },
 isBlocked:{
