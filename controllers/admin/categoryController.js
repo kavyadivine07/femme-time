@@ -154,9 +154,9 @@ const getUnlistCategory= async (req,res)=>{
 const getEditCategory= async (req,res)=>{
     try {
         const id = req.query.id
-        console.log("id is: ",id)
+       
         const category= await  Category.findOne({_id:id})
-        console.log("id is: ",category)
+       
         res.render("editCategory",{category:category})
     } catch (error) {
         res.redirect("/pageError")
@@ -167,9 +167,11 @@ const getEditCategory= async (req,res)=>{
 const editCategory = async (req,res)=>{
     try {
         const id= req.params.id;
+      console.log(id)
         const {categoryName,description}= req.body
+        console.log(categoryName)
         const existCategory= await Category.findOne({name:categoryName})
-
+       
         if(existCategory){
             return res.status(400).json({error: "Category exist, please choose another name"})
         }
