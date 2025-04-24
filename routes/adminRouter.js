@@ -6,6 +6,10 @@ const adminController= require("../controllers/admin/adminController")
 const {userAuth,adminAuth}= require("../middlewares/auth")
 const categoryController= require("../controllers/admin/categoryController")
 const brandController= require("../controllers/admin/brandController")
+const productController=require("../controllers/admin/productController")
+
+
+
 
 const multer= require("multer")
 const storeage= require("../helpers/multer")
@@ -44,5 +48,8 @@ router.get("/blockBrand",adminAuth,brandController.blockBrand)
 router.get("/unBlockBrand",adminAuth,brandController.unBlockBrand)
 router.get("/deleteBrand",adminAuth,brandController.deleteBrand)
 
+//product management
+router.get("/addProducts",adminAuth,productController.getProductAddPage)
+router.post("/addProducts",adminAuth,uploads.array("images",4),productController.addProducts)
 
 module.exports= router
