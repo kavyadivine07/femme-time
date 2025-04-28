@@ -109,6 +109,19 @@
         font-size: 0.75rem;
         display: none;
       }
+      
+      .forgot-password-link{
+        font-size: 0.875rem;
+        color: #333;
+        text-decoration: none;
+
+      }
+      .forgot-password-link:hover{
+        color: #ff7f50;
+      
+      }
+
+
     </style>
   </head>
   <body>
@@ -140,6 +153,11 @@
                 />
                 <div id="error2" class="error-message"></div>
               </div>
+
+              <div class="form-group d-flex justify-content-end" >
+                <a href="/forgotPassword" class="forgot-password-link ms-auto">forgotPassword</a>
+              </div>
+
               <%if(locals.message && message.length>0){%>
               <div class="alert alert-danger text-center">
                 <%=message%>

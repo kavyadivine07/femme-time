@@ -2,7 +2,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 mt-60">
-            <form method="post" action="/admin/editCategory/<%=category._id%>">
+            <form method="post" id="editCategoryForm" data-category-id="<%=category.id%>">
                 <div class="d-grid text-end mt-30 col-md-5">
                     <button class="btn btn-primary" type="submit">Update category</button>
                 </div>
@@ -20,3 +20,46 @@
     </div>
 </div>
 <%- include("../../views/partials/admin/footer") %>
+
+
+<script>
+
+const form = document.getElementById('editCategoryForm');
+const categoryId = form.getAttribute('data-category-id');
+
+form.addEventListener("submit", async (e) => {
+    console.log(categoryId);
+    
+  e.preventDefault();
+  
+  const categoryData = {
+    categoryName: document.querySelector('input[name="categoryName"]').value,
+    description: document.querySelector('textarea[name="description"]').value
+  };
+
+  try {
+    const result = await fetch(`/admin/editCategory/${categoryId}`, {
+    method: "PUT",
+    headers: {
+      'Content-Type': "application/json"
+    },
+    body: JSON.stringify(categoryData) 
+  });
+  const data = await result.json()
+
+  if(data.success){
+    window.location.href = data.redirectUrl
+  }else{
+    Swal.fire({
+        icon:"error",
+        message:"error"
+    })
+  }
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+ 
+});
+</script>

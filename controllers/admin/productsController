@@ -1,0 +1,62 @@
+const Product = require('../../models/productSchema');
+const Category = require('../../models/categorySchema');
+
+exports.getAllProducts = async (req, res) => {
+    try {
+        const search = req.query.search || '';
+        const products = await Product.find({
+            $or: [
+                { productName: { $regex: search, $options: 'i' } },
+                { brand: { $regex: search, $options: 'i' } }
+            ],
+            isBlocked: false
+        }).populate('category');
+        const categories = await Category.find({ isListed: true });
+        res.render('admin/products', { products, categories, search });
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.addProduct = async (req, res) => {
+    try {
+        const productData = req.body;
+        const product = new Product(productData);
+        await product.save();
+        res.status(201).json({ message: 'Product added successfully' });
+    } catch (err) {
+        res.status(400).json({ message: 'Failed to add product' });
+    }
+};
+
+exports.updateProduct = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        await Product.findByIdAndUpdate(productId, req.body, { new: true });
+        res.status(200).json({ message: 'Product updated successfully' });
+    } catch (err) {
+        res.status(400).json({ message: 'Failed to update product' });
+    }
+};
+
+exports.toggleBlock = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { isBlocked } = req.body;
+        await Product.findByIdAndUpdate(id, { isBlocked });
+        res.status(200).json({ message: `Product ${isBlocked ? 'blocked' : 'unblocked'} successfully` });
+    } catch (err) {
+        res.status(400).json({ message: 'Failed to update product status' });
+    }
+};
+
+exports.updateOffer = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { productOffer } = req.body;
+        await Product.findByIdAndUpdate(id, { productOffer });
+        res.status(200).json({ message: 'Offer updated successfully' });
+    } catch (err) {
+        res.status(400).json({ message: 'Failed to update offer' });
+    }
+};

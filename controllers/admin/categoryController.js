@@ -86,40 +86,7 @@ res.json({status:true})
 
 // function removeCategoryOffer defined
 
-const removeCategoryOffer= async (req,res)=>{
-    try {
-        const categoryId= req.body.categoryId;
-        console.log('Removing offer from category:', categoryId)
-//to find category from database
-        const category= await Category.findById(categoryId)
-if(!category){
-    console.log('Category not found:', categoryId);
-    return res.status(404).json({status:false, message:"Category not found"})
 
-}
-//to find the percentage of product
-const percentage= category.CategoryOffer
-
-//to check if any product has offer
-const products = await Product.find({category:category._id})
-
-if(products.length>0){
-    for(const product of products){
-        product.salePrice+=Math.floor(product.regularPrice * (percentage/100))
-        product.productOffer=0
-        await product.save()
-    
-    }   
-}category.CategoryOffer=0
-   
-await category.save()
-res.json({status:true})
-
-} catch (error) {
-    console.error('Error while removing offer:', error);
-       res.status(500).json({status:false, message:"Internal server error"}) 
-    }
-}
 
 
 //function to get listed categories
@@ -173,7 +140,7 @@ const editCategory = async (req,res)=>{
         const existCategory= await Category.findOne({name:categoryName})
        
         if(existCategory){
-            return res.status(400).json({error: "Category exist, please choose another name"})
+            return res.status(400).json({success:false,message:"catgegory already exist"})
         }
         const updateCategory= await Category.findByIdAndUpdate(id,{
             name:categoryName,
@@ -181,17 +148,15 @@ const editCategory = async (req,res)=>{
         },{new:true})
 
         if(updateCategory){
-            res.redirect("/admin/category")
+           return res.status(200).json({success:true,message:"Category edited successfully",redirectUrl:"/admin/category"})
 
 
         }else{
-            res.status(404).json({error:"Category not found"})
+           return  res.status(200).json({success:false,message:"failed to edit category"})
         }
 
     } catch (error) {
         res.status(500).json({error:"Internal Server error"})
-        
-        
     }
 }
 
@@ -206,8 +171,6 @@ const editCategory = async (req,res)=>{
 module.exports={
     categoryInfo,
     addCategory,
-    addCategoryOffer,
-    removeCategoryOffer,
     getListCategory,
     getUnlistCategory,
     getEditCategory,

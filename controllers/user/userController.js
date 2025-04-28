@@ -1,9 +1,10 @@
 const User= require("../../models/userSchema")
 const env= require("dotenv").config()
-
 const nodemailer= require("nodemailer")
 const bcrypt = require("bcrypt")
-
+const Product = require('../../models/productSchema')
+const Brand = require("../../models/brandSchema")
+const Category = require('../../models/categorySchema')
 const PageNotFound= async (req,res)=>{
     try{
         res.render("page404")
@@ -15,22 +16,60 @@ const PageNotFound= async (req,res)=>{
 
 const loadHomepage= async (req,res)=>{
     try{
-        const user= req.session.user
-        if(user){
-            const userData= await User.findById(user)
-           
+        const categories = await Category.find({ isListed: true });
 
-            res.render("home",{user:userData})
-        }else{
-       
-            return res.render("home",{user:null})
+        let productData = await Product.find({
+            isBlocked: false,
+            category: { $in: categories.map(cat => cat._id) }, // Fixed mapping
+            quantity: { $gt: 0 }
+        });
+        
+        productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn)); // Fixed sorting
+        productData = productData.slice(0, 4); // Get the top 4 products
+        
+const user= req.session.user
+        const userData = await User.findById(user)
+
+       if(userData){
+        if(userData && userData.isBlocked){
+            return res.redirect('/login')
         }
+        return res.render('home',{user:userData,products:productData})
+       }else{
+        return res.render('home',{user:null,products:productData})
+       }
        
     }catch(error){
         console.log("Home page not found")
         res.status(500).send("server error")
     }
 }
+
+const loadShopPage = async (req, res) => {
+    try {
+        const user = req.session.user;
+        const userData = user ? await User.findById(user) : null;
+        
+        // Fetch products, brands, and categories
+        const products = await Product.find({ isBlocked: false })
+            .populate('brand')
+            .populate('category')
+            .select("productName productImage regularPrice salePrice")
+            console.log(products);
+        const brands = await Brand.find({ isBlocked: false });
+        const categories = await Category.find({ isListed: true });
+        
+        res.render("shop", {
+            user: userData,
+            products: products,
+            brands: brands,
+            categories: categories
+        });
+    } catch (error) {
+        console.log("Error loading shop page:", error);
+        res.status(500).send("Server error");
+    }
+};
 
 
 const loadLogin= async (req,res)=>{
@@ -220,7 +259,8 @@ module.exports={
     loadSignin,
     signup,
     loadVerifyOtp,
-    logout
+    logout,
+    loadShopPage
 
 
 }

@@ -11,6 +11,7 @@ const productController=require("../controllers/admin/productController")
 
 
 
+
 const multer= require("multer")
 const storeage= require("../helpers/multer")
 const uploads= multer({storage:storeage})
@@ -34,12 +35,10 @@ router.get("/unblockCustomer",adminAuth,customerController.customerunBlocked)
 //category management
 router.get("/category",adminAuth,categoryController.categoryInfo)
 router.post("/addCategory",adminAuth,categoryController.addCategory)
-router.post("/addCategoryOffer",adminAuth,categoryController.addCategoryOffer)
-router.post("/removeCategoryOffer",adminAuth,categoryController.removeCategoryOffer)
 router.get("/listCategory",adminAuth,categoryController.getListCategory)
 router.get("/unlistCategory",adminAuth,categoryController.getUnlistCategory)
 router.get("/editCategory",adminAuth,categoryController.getEditCategory)
-router.post("/editCategory/:id ",adminAuth,categoryController.editCategory)
+router.put("/editCategory/:id",adminAuth,categoryController.editCategory)
 
 //brand management
 router.get("/brands",adminAuth,brandController.getBrandPage)
@@ -51,5 +50,11 @@ router.get("/deleteBrand",adminAuth,brandController.deleteBrand)
 //product management
 router.get("/addProducts",adminAuth,productController.getProductAddPage)
 router.post("/addProducts",adminAuth,uploads.array("images",4),productController.addProducts)
+router.get("/products",adminAuth,productController.getAllProducts)
+router.get('/editProduct/:id',adminAuth,productController.getEditProduct)
+router.post('/edit-product', adminAuth, uploads.array('images', 4), productController.updateProduct);
+
+
+
 
 module.exports= router

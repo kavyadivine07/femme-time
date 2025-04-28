@@ -10,29 +10,30 @@ description:{
     type:String,
     required:true
 },
-brand:{
-    type:String,
-    required:true
+brand: {
+    type: Schema.Types.ObjectId,
+    ref: "Brand",
+    required: true
 },
-category:{
-    type:String,
-    ref:"Category",
-    required:true
+category: {
+    type: Schema.Types.ObjectId,
+    ref: "Category",
+    required: true
 },
 regularPrice:{
     type:Number,
-    reqeuired:true
+    required:true
 },
 salePrice:{
     type:Number,
-    requireed:true
+    required:true
 },
 productOffer:{
     type:Number,
     default:0
 
 },
-quanitiy:{
+quantity:{
     type:Number,
     default:true
 },
@@ -41,7 +42,7 @@ color:{
     required:true
 },
 productImage:{
-    type:String,
+    type: [String],
     required:true
 },
 isBlocked:{
