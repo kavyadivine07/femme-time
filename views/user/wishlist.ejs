@@ -1,0 +1,530 @@
+<%- include("../../views/partials/user/header.ejs") %>
+<style>
+    /* General Page Styling */
+    .breadcrumb-wrap {
+        background-color: #eceff1;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #cfd8dc;
+    }
+
+    .breadcrumb a {
+        color: #1e88e5;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        color: #546e7a;
+        font-weight: normal;
+    }
+
+    /* Wishlist Table Styling */
+    .wishlist-table {
+        border: 1px solid #dce3e8;
+        border-radius: 10px;
+        margin-top: 20px;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .shopping-summery th {
+        background-color: #f5f7fa;
+        color: #37474f;
+        padding: 18px;
+        font-size: 16px;
+        text-transform: uppercase;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .shopping-summery td {
+        padding: 20px;
+        font-size: 14px;
+        text-align: center;
+        vertical-align: middle;
+        border-bottom: 1px solid #eceff1;
+    }
+
+    .product-thumbnail img {
+        max-width: 90px;
+        height: auto;
+        border-radius: 8px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .product-thumbnail img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-name a {
+        color: #37474f;
+        font-weight: bold;
+        font-size: 15px;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .product-name a:hover {
+        color: #1e88e5;
+    }
+
+    .font-xs {
+        font-size: 13px;
+        color: #78909c;
+        margin-top: 5px;
+    }
+
+    .price {
+        color: #ff5722;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .btn-add-cart {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-add-cart:hover {
+        background-color: #388e3c;
+        transform: scale(1.05);
+    }
+
+    .btn-add-cart:disabled {
+        background-color: #b0bec5;
+        cursor: not-allowed;
+    }
+
+    .btn-remove {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-remove:hover {
+        background-color: #d32f2f;
+        transform: scale(1.05);
+    }
+
+    .btn-view {
+        background-color: #1e88e5;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-view:hover {
+        background-color: #1565c0;
+        transform: scale(1.05);
+    }
+
+    .empty-wishlist {
+        font-size: 18px;
+        color: #546e7a;
+        font-weight: 600;
+        text-align: center;
+        padding: 25px 15px;
+        background-color: #f5f7fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .size-select {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #dce3e8;
+        font-size: 14px;
+        width: 80px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .shopping-summery th, .shopping-summery td {
+            font-size: 12px;
+            padding: 12px;
+        }
+
+        .product-thumbnail img {
+            max-width: 70px;
+        }
+
+        .btn-add-cart, .btn-remove, .btn-view, .size-select {
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+    }
+
+    .add-to-cart-btn {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: #388e3c;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        transform: scale(1.05);
+    }
+
+    .add-to-cart-btn:disabled {
+        background-color: #cfd8dc;
+        color: #9e9e9e;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .add-to-cart-btn:focus {
+        outline: 3px solid #81c784;
+        outline-offset: 2px;
+    }
+</style>
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> Shop
+                <span></span> My Wishlist
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center clean wishlist-table">
+                            <thead>
+                                <tr class="main-heading">
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Brand & Category</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Size</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Add to Cart</th>
+                                    <th scope="col">Remove</th>
+                                    <th scope="col">View</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (wishlist.length > 0) { %>
+                                    <% wishlist.forEach(item => { 
+                                        const product = item.productId;
+                                    %>
+                                        <tr>
+                                            <!-- Image -->
+                                            <td class="image product-thumbnail">
+                                                <% if (product && product.productImage && product.productImage.length > 0) { %>
+                                                    <img src="/Uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>" />
+                                                <% } else { %>
+                                                    <img src="/Uploads/re-image/default.png" alt="No Image Available" />
+                                                <% } %>
+                                            </td>
+
+                                            <!-- Product Name -->
+                                            <td class="product-des product-name">
+                                                <% if (product) { %>
+                                                    <a href="/product/<%= product._id %>"><%= product.productName %></a>
+                                                <% } else { %>
+                                                    <span>N/A</span>
+                                                <% } %>
+                                            </td>
+
+                                            <!-- Brand & Category -->
+                                            <td>
+                                                <% if (product) { %>
+                                                    <p class="font-xs">
+                                                        <strong>Category:</strong> <%= product.category?.name || 'N/A' %><br />
+                                                        <strong>Brand:</strong> <%= product.brand?.brandName || 'N/A' %>
+                                                    </p>
+                                                <% } else { %>
+                                                    <p class="font-xs">N/A</p>
+                                                <% } %>
+                                            </td>
+
+                                            <!-- Price -->
+                                            <td class="price" data-title="Price">
+                                                <% if (product && product.sizeVariants && product.sizeVariants.length > 0) { %>
+                                                    ₹<%= (product.sizeVariants[0].salePrice || product.sizeVariants[0].regularPrice || 0).toFixed(2) %>
+                                                <% } else { %>
+                                                    ₹0.00
+                                                <% } %>
+                                            </td>
+
+                                            <!-- Size (with Dropdown) -->
+                                            <td class="selected-size" data-product-id="<%= product._id %>">
+                                                <% if (product && product.sizeVariants && product.sizeVariants.length > 0) { %>
+                                                    <select class="size-select" data-product-id="<%= product._id %>" onchange="updateAddToCartButton(this, '<%= product._id %>')">
+                                                        <% product.sizeVariants.forEach(variant => { %>
+                                                            <option value="<%= variant.size %>" data-quantity="<%= variant.quantity || 0 %>" data-price="<%= variant.salePrice.toFixed(2) %>">
+                                                                <%= variant.size %>
+                                                            </option>
+                                                        <% }); %>
+                                                    </select>
+                                                <% } else { %>
+                                                    N/A
+                                                <% } %>
+                                            </td>
+
+                                            <!-- Quantity -->
+                                            <td>
+                                                <% if (product && product.sizeVariants && product.sizeVariants.length > 0) { %>
+                                                    <%= product.sizeVariants.reduce((total, v) => total + (v.quantity || 0), 0) %> in stock
+                                                <% } else { %>
+                                                    N/A
+                                                <% } %>
+                                            </td>
+
+                                            <!-- Add to Cart -->
+                                            <td>
+                                                <% if (product && product.sizeVariants && product.sizeVariants.length > 0) { %>
+                                                    <button class="add-to-cart-btn" data-product-id="<%= product._id %>" disabled>Add to Cart</button>
+                                                <% } else { %>
+                                                    <button class="add-to-cart-btn" disabled>Out of Stock</button>
+                                                <% } %>
+                                            </td>
+
+                                            <!-- Remove -->
+                                            <td>
+                                                <% if (product) { %>
+                                                    <button class="btn btn-sm btn-remove" onclick="removeFromWishlist('<%= product._id %>')">Remove</button>
+                                                <% } else { %>
+                                                    <button class="btn btn-sm btn-remove" disabled>Remove</button>
+                                                <% } %>
+                                            </td>
+
+                                            <!-- View Product -->
+                                            <td>
+                                                <% if (product) { %>
+                                                    <a href="/product/<%= product._id %>" class="btn btn-sm btn-view">View Product</a>
+                                                <% } else { %>
+                                                    <button class="btn btn-sm btn-view" disabled>View Product</button>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <p class="lead mb-4">No items found in your wishlist.</p>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include("../../views/partials/user/footer") %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Initialize Add to Cart buttons on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.size-select').forEach(select => {
+            const productId = select.dataset.productId;
+            updateAddToCartButton(select, productId);
+        });
+    });
+
+    function updateAddToCartButton(select, productId) {
+        const quantity = parseInt(select.options[select.selectedIndex].dataset.quantity) || 0;
+        const selectedSize = select.value;
+        const button = select.closest('tr').querySelector(".add-to-cart-btn");
+        
+        console.log(`Updating button for product ${productId}, size: ${selectedSize}, quantity: ${quantity}`);
+        
+        if (quantity > 0) {
+            button.disabled = false;
+            button.onclick = () => addToCart(productId, selectedSize);
+        } else {
+            button.disabled = true;
+            button.onclick = null;
+            button.textContent = 'Out of Stock';
+        }
+    }
+
+    async function addToCart(productId, size) {
+        try {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true
+            });
+
+            Toast.fire({
+                icon: 'info',
+                title: 'Adding to cart...'
+            });
+
+            const quantity = 1;
+
+            console.log('Adding to cart:', { productId, size, quantity });
+
+            const response = await fetch('/addToCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    productId,
+                    size,
+                    quantity
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                if (data.status === 'already_in_cart') {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Already in Cart',
+                        text: 'This item is already in your cart.',
+                        confirmButtonText: 'View Cart',
+                        showCancelButton: true,
+                        cancelButtonText: 'Continue Shopping'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/cart';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added to Cart!',
+                        text: 'Product added to your cart successfully.',
+                        confirmButtonText: 'View Cart',
+                        showCancelButton: true,
+                        cancelButtonText: 'Continue Shopping'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/cart';
+                        }
+                    });
+                }
+            } else {
+                console.error('Add to cart error:', data.message);
+                if (data.redirect) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Login Required',
+                        text: data.message,
+                        confirmButtonText: 'Login Now',
+                        showCancelButton: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = data.redirect;
+                        }
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            }
+        } catch (error) {
+            console.error('Add to cart failed:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Something went wrong!'
+            });
+        }
+    }
+
+    async function removeFromWishlist(productId) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to undo this action!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, remove it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/wishlist/remove/${productId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "Removed!",
+                            text: "The item has been removed from your wishlist.",
+                            icon: "success",
+                            confirmButtonText: "OK",
+                        }).then(() => {
+                            const row = document.querySelector(`tr td button[onclick="removeFromWishlist('${productId}')"]`).closest("tr");
+                            if (row) row.remove();
+                            if (!document.querySelector("tbody tr")) {
+                                document.querySelector("tbody").innerHTML = `
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <p class="lead mb-4">No items found in your wishlist.</p>
+                                        </td>
+                                    </tr>
+                                `;
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: data.message || "Unable to remove the item.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong. Please try again.",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                    });
+                });
+            }
+        });
+    }
+</script>

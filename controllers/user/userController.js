@@ -2,14 +2,19 @@ const User= require("../../models/userSchema")
 const env= require("dotenv").config()
 const nodemailer= require("nodemailer")
 const bcrypt = require("bcrypt")
+const mongoose = require("mongoose")
 const Product = require('../../models/productSchema')
 const Brand = require("../../models/brandSchema")
 const Category = require('../../models/categorySchema')
+
+
+
 const PageNotFound= async (req,res)=>{
     try{
         res.render("page404")
 
     }catch(error){
+        console.log(error)
         res.redirect("/PageNotFound")
     }
 }
@@ -40,37 +45,117 @@ const user= req.session.user
        }
        
     }catch(error){
-        console.log("Home page not found")
+        console.log("Home page not found",error)
         res.status(500).send("server error")
     }
 }
 
+// const loadShopPage = async (req, res) => {
+//     try {
+//         const user = req.session.user;
+//         const userData = user ? await User.findById(user) : null;
+        
+//         // Fetch products, brands, and categories
+//         const products = await Product.find({ isBlocked: false })
+//             .populate('brand')
+//             .populate('category')
+//             .select("productName productImage regularPrice salePrice")
+//             console.log(products);
+//         const brands = await Brand.find({ isBlocked: false });
+//         const categories = await Category.find({ isListed: true });
+        
+//         res.render("shop", {
+//             user: userData,
+//             products: products,
+//             brands: brands,
+//             categories: categories
+//         });
+//     } catch (error) {
+//         console.log("Error loading shop page:", error);
+//         res.status(500).send("Server error");
+//     }
+// };
+
+
 const loadShopPage = async (req, res) => {
     try {
-        const user = req.session.user;
-        const userData = user ? await User.findById(user) : null;
-        
-        // Fetch products, brands, and categories
-        const products = await Product.find({ isBlocked: false })
-            .populate('brand')
-            .populate('category')
-            .select("productName productImage regularPrice salePrice")
-            console.log(products);
-        const brands = await Brand.find({ isBlocked: false });
-        const categories = await Category.find({ isListed: true });
-        
-        res.render("shop", {
-            user: userData,
-            products: products,
-            brands: brands,
-            categories: categories
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8; // 4 products per row, 2 rows = 8 products per page
+        const skip = (page - 1) * limit;
+        const search = req.query.search || '';
+        const brand = req.query.brand || '';
+        const category = req.query.category || '';
+        const sort = req.query.sort || '';
+
+        // Build query conditions
+        const query = {
+           // sizeVariants: { $exists: true, $ne: [] },
+            isBlocked: false
+        };
+
+        // Add search by productName (case-insensitive)
+        if (search) {
+            query.productName = { $regex: search, $options: 'i' };
+        }
+
+        // Add brand filter
+        if (brand && mongoose.isValidObjectId(brand)) {
+            query.brand = brand;
+        }
+
+        // Add category filter
+        if (category && mongoose.isValidObjectId(category)) {
+            query.category = category;
+        }
+
+        // Define sort options
+        let sortOption = {};
+        if (sort === 'lowToHigh') {
+            sortOption = { 'sizeVariants.0.salePrice': 1 };
+        } else if (sort === 'highToLow') {
+            sortOption = { 'sizeVariants.0.salePrice': -1 };
+        }
+        if (!sort) {
+            sortOption = { 'createdAt': -1 };
+        }
+
+        // Fetch total number of matching products
+        const totalProducts = await Product.countDocuments(query);
+
+        // Calculate total pages
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        // Fetch products for the current page
+        const products = await Product.find(query)
+            .sort(sortOption)
+            .skip(skip)
+            .limit(limit)
+            .populate('brand category');
+
+        // Fetch categories and brands
+        const categories = await Category.find();
+        const brands = await Brand.find();
+
+        // Log for debugging
+        console.log(`Page ${page}: Fetched ${products.length} products, Total: ${totalProducts}, Query:`, { search, brand, category, sort });
+
+        res.render('shop', {
+            products,
+            categories,
+            brands,
+            currentPage: page,
+            totalPages,
+            totalProducts,
+            search,
+            selectedBrand: brand,
+            selectedCategory: category,
+            selectedSort: sort
         });
     } catch (error) {
-        console.log("Error loading shop page:", error);
-        res.status(500).send("Server error");
+        console.error('Error fetching shop data:', error);
+        res.status(500).send('Server Error');
     }
 };
-
 
 const loadLogin= async (req,res)=>{
     try{
@@ -81,6 +166,7 @@ const loadLogin= async (req,res)=>{
             res.render("home",{user:user})
         }
     }catch(error){
+        console.log(error)
         res.redirect("/pageNotFound")
     }
 }
@@ -161,7 +247,7 @@ const securePassword= async (password)=>{
         const passwordHash = await bcrypt.hash(password,10)
         return passwordHash
     } catch (error) {
-        
+        console.log(error)
     }
 
 }

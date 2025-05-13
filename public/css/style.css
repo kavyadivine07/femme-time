@@ -1527,6 +1527,64 @@ ol {
 	padding-left: 10px;
 	padding-right: 15px;
 }
+.old-price {
+    text-decoration: line-through;
+    color: gray; /* optional: makes it look like a regular MRP */
+    margin-right: 8px; /* space before sale price */
+}
+
+    .size-circle-container {
+        margin: 15px 0;
+    }
+    
+    .size-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .size-circle-wrapper {
+        position: relative;
+    }
+    
+    .size-radio {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .size-circle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .size-radio:checked + .size-circle {
+        background-color: #212529;
+        color: white;
+        border-color: #212529;
+    }
+    
+    .size-radio:focus + .size-circle {
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+    
+    /* For out of stock items - optional */
+    .size-circle.out-of-stock {
+        opacity: 0.5;
+        text-decoration: line-through;
+        cursor: not-allowed;
+    }
+
 
 /*---------------------
   Shop

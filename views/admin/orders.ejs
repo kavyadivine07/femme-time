@@ -1,0 +1,235 @@
+<!-- views/admin/orders.ejs -->
+<%- include("../../views/partials/admin/header") %>
+
+<head>
+  <link rel="stylesheet" href="/styles/adminOrder.css">
+  <style>
+    .summary-card {
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .summary-card:hover {
+      transform: translateY(-5px);
+    }
+    .card-body-icon {
+      font-size: 2rem;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
+    .summary-title {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+    .summary-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<div class="container-fluid">
+  <!-- Order Summary Section -->
+  <div class="row mb-4">
+    <div class="col-xl-3 col-sm-6 mb-3">
+      <div class="card text-white bg-primary summary-card">
+        <div class="card-body">
+          <div class="card-body-icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <div class="text-center">
+            <h5 class="summary-title">Total Orders</h5>
+            <div class="summary-value"><%= totalOrders %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-3">
+      <div class="card text-white bg-success summary-card">
+        <div class="card-body">
+          <div class="card-body-icon">
+            <i class="fas fa-rupee-sign"></i>
+          </div>
+          <div class="text-center">
+            <h5 class="summary-title">Active Revenue</h5>
+            <div class="summary-value">₹<%= activeRevenue.toLocaleString('en-IN') %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-3">
+      <div class="card text-white bg-danger summary-card">
+        <div class="card-body">
+          <div class="card-body-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="text-center">
+            <h5 class="summary-title">Total Revenue</h5>
+            <div class="summary-value">₹<%= totalRevenue.toLocaleString('en-IN') %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-3">
+      <div class="card text-white bg-warning summary-card">
+        <div class="card-body">
+          <div class="card-body-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="text-center">
+            <h5 class="summary-title">Pending Orders</h5>
+            <div class="summary-value"><%= pendingOrders %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-3">
+      <div class="card text-white bg-info summary-card">
+        <div class="card-body">
+          <div class="card-body-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="text-center">
+            <h5 class="summary-title">Completed Orders</h5>
+            <div class="summary-value"><%= completedOrders %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Table Section -->
+  <div class="row">
+    <div class="col-12">
+      <div style="background-color: white;">
+        <h3 style="font-family:math; margin-left: 24px; margin-top: 15px; font-size: 35px" class="card-title">Order Management</h3>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% orders.forEach(order => { %>
+                  <tr>
+                    <td><%= order.orderId %></td>
+                    <td><%= order.userName %></td>
+                    <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                    <td>
+                      <select class="form-select status-select" data-order-id="<%= order._id %>">
+                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                        <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+                        <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                      </select>
+                    </td>
+                    <td>₹<%= order.finalAmount.toLocaleString('en-IN') %></td>
+                    <td>
+                      <a href="/admin/orders/<%= order._id %>" class="btn btn-info btn-sm">View Details</a>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container mt-4">
+    <ul class="pagination justify-content-center">
+      <% if (currentPage > 1) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= currentPage - 1 %>">« Previous</a>
+        </li>
+      <% } %>
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+      <% if (currentPage < totalPages) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= currentPage + 1 %>">Next »</a>
+        </li>
+      <% } %>
+    </ul>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const statusOrder = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Return Request", "Returned"];
+      document.querySelectorAll('.status-select').forEach(select => {
+        const currentStatus = select.value;
+        if (["Delivered", "Cancelled", "Returned"].includes(currentStatus)) {
+          select.disabled = true;
+          return;
+        }
+        select.addEventListener('change', async function () {
+          const orderId = this.dataset.orderId;
+          const newStatus = this.value;
+          if (statusOrder.indexOf(newStatus) < statusOrder.indexOf(currentStatus)) {
+            Swal.fire({
+              title: 'Invalid Transition',
+              text: 'You cannot revert to a previous status.',
+              icon: 'warning',
+              confirmButtonText: 'OK',
+            });
+            this.value = currentStatus;
+            return;
+          }
+          try {
+            const response = await fetch('/admin/orders/update-status', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ orderId, status: newStatus }),
+            });
+            const data = await response.json();
+            if (data.success) {
+              Swal.fire({
+                title: 'Success!',
+                text: 'Status updated successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+              });
+            } else {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Failed to update status: ' + data.message,
+                icon: 'error',
+                confirmButtonText: 'OK',
+              });
+              this.value = currentStatus;
+            }
+          } catch (error) {
+            console.error('Error updating status:', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to update status. Please try again later.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+            this.value = currentStatus;
+          }
+        });
+      });
+    });
+  </script>
+
+  <%- include("../../views/partials/admin/footer") %>
+</html>

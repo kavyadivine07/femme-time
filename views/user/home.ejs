@@ -173,43 +173,7 @@
       </div>
   </div>
 </section>
-<section class="product spad">
-  <div class="container">
-      <div class="row">
-          <div class="col-lg-12">
-              <ul class="filter__controls">
-                  <li data-filter=".new-arrivals">New Arrivals</li>
-              </ul>
-          </div>
-      </div>
-      <div class="row product__filter">
-        <%for(let i=0;i<products.length;i++){%>
-              <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                  <div class="product-cart-wrap mb-30">
-                      <div class="product-img-action-wrap">
-                          <div class="product-img product-img-zoom">
 
-                              <a href="/productDetails?id:=<%=products[i].id%>">
-                                  <img class="default-img" src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%products[i].productsName%>">
-                              </a>
-                          </div>
-                          
-                      </div>
-                      <div class="product-action-1">
-                        <a  aria-label="Add to wishlist " class="action-btn hover-up"  href="/addToWishList?id=<%products[i]._id%>"></a>
-                      </div>
-
-                      <div class="product-content-wrap">
-                          <h6><%=products[i].productName%></h6>
-                          <h5><%=products[i].productSalePrice%></h5>
-                          <a href="/addToCart?id=<%=products[i].id%>">Add to Cart</a>
-                      </div>
-                  </div>
-              </div>
-              <%}%>
-      </div>
-  </div>
-</section>
 <%- include("../../views/partials/user/footer") %>
 
 

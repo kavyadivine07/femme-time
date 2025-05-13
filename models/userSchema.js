@@ -11,6 +11,11 @@ const userSchema= new Schema({
         required:true,
         unique:true
     },
+    
+    profilePhoto: {
+        type: String,
+        default: '/Uploads/profile-images/default-profile.jpg' // Default image
+    },
     phone:{
         type: String,
         required: false,

@@ -1,0 +1,377 @@
+<%- include("../../views/partials/user/header") %>
+<main class="main">
+ <div class="page-header breadcrumb-wrap">
+     <div class="container">
+         <div class="breadcrumb">
+             <a href="/" rel="nofollow">Home</a>
+             <span></span> Shop
+             <span></span>product detail page
+         </div>
+     </div>
+ </div>
+ <section class="mt-50 mb-50">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-9">
+                 <div class="product-detail accordion-detail">
+                     <div class="row mb-50">
+                         <div class="col-md-6 col-sm-12 col-xs-12">
+                             <div class="detail-gallery">
+                                 <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                                 <div class="product-image-slider">
+                                     <figure class="border-radius-10">
+                                         <img src="/uploads/re-image/<%=product.productImage[0]%>" alt="Product image">
+                                     </figure>
+                                     <figure class="border-radius-10">
+                                       <img src="/uploads/re-image/<%=product.productImage[1]%>" alt="Product image">
+                                   </figure>
+                                   <figure class="border-radius-10">
+                                       <img src="/uploads/re-image/<%=product.productImage[2]%>" alt="Product image">
+                                   </figure>
+                                   <figure class="border-radius-10">
+                                       <img src="/uploads/re-image/<%=product.productImage[3]%>" alt="Product image">
+                                   </figure>
+                                   <figure class="border-radius-10">
+                                       <img src="/uploads/re-image/<%=product.productImage[4]%>" alt="Product image">
+                                   </figure>
+                                 </div>
+                                 <div  class="slider-nav-thumbnails pl-15 pr-15">
+                                    <%for(let i=0;i<product.productImage.length;i++){%>
+                                       <div>
+                                           <img style="object-fit:contain ;" src="/uploads/re-image/<%=product.productImage[i]%>" alt="product image">
+                                       </div>
+                                  <%}%>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="col-md-6 col-sm-12 col-xs-12">
+                             <div class="detail-info">
+                                 <h2 class="title-detail"><%=product.productName%></h2>
+                                 <div class="product-detail-rating">
+                                     <div class="pro-details-brand">
+                                         <span> Brand: <a href="#"><%=product.brand.brandName%></a></span>
+                                     </div>
+                                     <div class="product-rate-cover text-end">
+                                         <div class="product-rate d-inline-block">
+                                             <div class="product-rating" style="width:90%">
+                                             </div>
+                                         </div>
+                                         <span class="font-small ml-5 text-muted"> (25 reviews)</span>
+                                     </div>
+                                 </div>
+                                 <h5>
+                                    <% if (product.sizeVariants && product.sizeVariants.length > 0) { %>
+                                        <% const variant = product.sizeVariants[0]; %>
+                                        <% if (variant.productOffer > 0) { %>
+                                            <span class="old-price">₹<%= variant.regularPrice.toFixed(2) %></span>
+                                            ₹<%= variant.salePrice.toFixed(2) %>
+                                        <% } else { %>
+                                            <%= variant.salePrice.toFixed(2) %>
+                                        <% } %>
+                                    <% } else { %>
+                                        Price not available
+                                    <% } %>
+                                </h5>
+                                
+                                 <div class="bt-1 border-color-1 mt-15 mb-15"></div>
+                                 <div class="short-desc mb-30">
+                                     <p><%=product.description%></p>
+                                 </div>
+                                 <div class="product_sort_info font-xs mb-30">
+                                     <ul>
+                                         <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Brand Warranty</li>
+                                         <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
+                                         <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
+                                     </ul>
+                                 </div>
+                               
+                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                 <div class="detail-extralink">
+                                     <div class="detail-qty border radius">
+                                         <a href="#" class="qty-down" onclick="" ><i class="fi-rs-angle-small-down"></i></a>
+                                         <span class="qty-val" id="quantity">1</span>
+                                         <a href="#" class="qty-up" onclick=""><i class="fi-rs-angle-small-up"></i></a>
+                                     </div>
+                                     <div class="product-extra-link2">
+                                      
+                                         <!-- <button type="submit" class="button button-add-to-cart" onclick="">Add to cart</button> -->
+                                         <button onclick="addToCart('<%= product._id %>')"  type="submit" class="button button-add-to-cart">+ Add To Cart</button>
+                                       
+
+                                         <button onclick="addToWishlist('<%= product._id %>')" aria-label="Add To Wishlist" class="action-btn hover-up">
+                                            <i class="fi-rs-heart"></i>
+                                        </button>
+                                         
+                                     </div>
+                                 </div>
+                                 <ul class="product-meta font-xs color-grey mt-50">
+                                                                       
+<% if (product.sizeVariants && product.sizeVariants.length > 0) { %>
+    <div class="size-circle-container">
+        <h6 class="mb-2">Size</h6>
+        <div class="size-options">
+            <% product.sizeVariants.forEach((variant, index) => { %>
+                <div class="size-circle-wrapper">
+                    <input 
+                        type="radio" 
+                        name="size" 
+                        id="size-<%= variant.size %>" 
+                        value="<%= variant.size %>" 
+                        class="size-radio" 
+                        data-product-id="<%= product._id %>"
+                        data-price="<%= variant.salePrice.toFixed(2) %>"
+                        <%= index === 0 ? 'checked' : '' %>
+                    >
+                    <label for="size-<%= variant.size %>" class="size-circle">
+                        <%= variant.size %>
+                    </label>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+<% } else { %>
+    <p>No sizes available</p>
+<% } %>
+
+
+                                     <li class="mb-5">Category: <a href="#" rel="tag"></a> <a href="#" rel="tag"><%=category.name%></a> <a href="#" rel="tag"></a> </li>
+                                     <li>Availability: <span class="in-stock text-success ml-5">
+                                        <%= product.sizeVariants && product.sizeVariants.length > 0 ? product.sizeVariants[0].quantity : 'Not available' %> Items in stock
+                                    </span></li>
+                            
+                                 </ul>
+                             </div>
+                         </div>
+                     </div>
+                    
+                 </div>
+             </div>
+         </div>
+     </div>
+ </section>
+</main>
+<%- include("../../views/partials/user/footer") %>
+
+
+<script>
+    
+
+async function addToWishlist(productId) {
+      try {
+          const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 1000,
+              timerProgressBar: true
+          });
+  
+          Toast.fire({
+              icon: 'info',
+              title: 'Adding to wishlist...'
+          });
+  
+          const response = await fetch('/addToWishlist', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ productId }),
+              credentials: 'same-origin' // Ensure cookies are sent with request
+          });
+  
+          const data = await response.json();
+  
+          if (data.status) {
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Added to Wishlist!',
+                  text: data.message,
+                  confirmButtonText: 'View Wishlist',
+                  showCancelButton: true,
+                  cancelButtonText: 'Continue Shopping'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      window.location.href = '/wishlist';
+                  }
+              });
+          } else {
+              if (data.redirect) {
+                  // Handle redirect for login
+                  Swal.fire({
+                      icon: 'warning',
+                      title: 'Login Required',
+                      text: 'Please login to add items to your wishlist',
+                      confirmButtonText: 'Login Now',
+                      showCancelButton: true,
+                      cancelButtonText: 'Cancel'
+                  }).then((result) => {
+                      if (result.isConfirmed) {
+                          window.location.href = data.redirect;
+                      }
+                  });
+              } else {
+                  Swal.fire({
+                      icon: 'warning',
+                      title: 'Warning',
+                      text: data.message
+                  });
+              }
+          }
+      } catch (error) {
+          console.error('Add to wishlist failed:', error);
+          Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Something went wrong!'
+          });
+      }
+  }
+
+async function addToCart(productId) {
+    try {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true
+        });
+
+        Toast.fire({
+            icon: 'info',
+            title: 'Adding to cart...'
+        });
+
+        // Get the selected size and quantity
+        const selectedSizeElement = document.querySelector('.size-radio:checked');
+        if (!selectedSizeElement) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Select Size',
+                text: 'Please select a size before adding to cart.'
+            });
+            return;
+        }
+
+        const selectedSize = selectedSizeElement.value.trim().toUpperCase();
+        const quantity = parseInt(document.getElementById('quantity').textContent);
+
+        // Validate size selection
+        // const variants = <%- JSON.stringify(product.sizeVariants) %>;
+        const variants = <%- JSON.stringify(product.sizeVariants).replace(/</g, '\\u003c') %>;
+
+        const selectedVariant = variants.find(variant => variant.size === selectedSize);
+        if (!selectedVariant) {
+            console.error('Invalid size selected:', selectedSize, 'Available sizes:', variants.map(v => v.size));
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Size',
+                text: 'The selected size is not available for this product.'
+            });
+            return;
+        }
+
+        // Validate salePrice
+        if (!selectedVariant.salePrice || isNaN(selectedVariant.salePrice) || selectedVariant.salePrice <= 0) {
+            console.error('Invalid salePrice on front end:', selectedVariant);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Price',
+                text: 'The product price is invalid. Please contact support.'
+            });
+            return;
+        }
+
+        // Validate quantity
+        if (quantity > selectedVariant.quantity) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Out of Stock',
+                text: `Only ${selectedVariant.quantity} items available for size ${selectedSize}.`
+            });
+            return;
+        }
+
+        // Log data for debugging
+        console.log('Adding to cart:', {
+            productId,
+            size: selectedSize,
+            quantity,
+            salePrice: selectedVariant.salePrice
+        });
+
+        const response = await fetch('/addToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                productId,
+                size: selectedSize,
+                quantity
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.status === 'already_in_cart') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Already in Cart',
+                    text: 'This item is already in your cart.',
+                    confirmButtonText: 'View Cart',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue Shopping'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/cart';
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added to Cart!',
+                    text: 'Product added to your cart successfully.',
+                    confirmButtonText: 'View Cart',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue Shopping'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/cart';
+                    }
+                });
+            }
+        } else {
+            console.error('Add to cart error:', data.message);
+            if (data.redirect) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Login Required',
+                    text: data.message,
+                    confirmButtonText: 'Login Now',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = data.redirect;
+                    }
+                });
+            } else {
+                throw new Error(data.message);
+            }
+        }
+    } catch (error) {
+        console.error('Add to cart failed:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Something went wrong!'
+        });
+    }
+}
+
+</script>
+
+
+

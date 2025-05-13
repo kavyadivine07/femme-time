@@ -4,7 +4,8 @@ const {Schema}= mongoose
 const productSchema= new Schema({
 productName:{
     type:String,
-    required:true
+    required:true,
+    trim: true
 },
 description:{
     type:String,
@@ -20,6 +21,14 @@ category: {
     ref: "Category",
     required: true
 },
+sizeVariants: {
+    type: [{
+    size: {
+        type: String,
+        required: true,
+        trim: true,
+        enum: ["S", "M", "L", "XL", "XXL"] 
+    },
 regularPrice:{
     type:Number,
     required:true
@@ -37,6 +46,25 @@ quantity:{
     type:Number,
     default:true
 },
+isBlocked:{
+    type:Boolean,
+    default:false
+},
+
+status:{
+    type:String,
+    enum:["Available","Out of Stock","Discontinued"],
+    default:"Available"
+},
+}],
+required: true,
+validate: {
+    validator: function (arr) {
+        return arr.length > 0;
+    },
+    message: "At least one size variant is required"
+}
+},
 color:{
     type:String,
     required:true
@@ -44,16 +72,7 @@ color:{
 productImage:{
     type: [String],
     required:true
-},
-isBlocked:{
-    type:Boolean,
-    default:false
-},
-status:{
-    type:String,
-    enum:["Available","Out of Stock","Discontinued"],
-    default:"Available"
-},
+}
 
 },{timestamps:true})
 

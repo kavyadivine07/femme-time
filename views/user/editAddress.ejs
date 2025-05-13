@@ -1,0 +1,293 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+  .card-green {
+    background-color: #ADD8E6;
+  }
+  .main {
+    padding: 30px 0;
+  }
+
+  .dashboard-menu {
+    background-color: #cce3e6;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .dashboard-menu .nav-link {
+    font-weight: bold;
+    color: #30683c;
+    box-shadow: 0 4px 10px rgba(123, 131, 112, 0.3), 0 4px 20px rgba(0, 191, 255, 0.2);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .dashboard-menu .nav-link:hover {
+    color: #00bfff;
+    box-shadow: 0 4px 15px rgba(173, 255, 47, 0.5), 0 6px 25px rgba(0, 191, 255, 0.4);
+  }
+
+  .card {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    background-color: #487379;
+    color: white;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .btn-success {
+    background-color: #577194;
+    border-color: #6bb87d;
+  }
+
+  .btn-success:hover {
+    background-color: #506955;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .required {
+    color: red;
+  }
+
+  label {
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  .form-control:focus {
+    border-color: #487379;
+    box-shadow: 0 0 0 0.25rem rgba(72, 115, 121, 0.25);
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-menu {
+      padding: 10px;
+    }
+
+    .card {
+      margin-bottom: 15px;
+    }
+  }
+  
+  .page-header.breadcrumb-wrap {
+    background-color: #eee2e9;
+    padding: 15px 0;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    color: #121311;
+  }
+
+  .breadcrumb a {
+    color: #007bff;
+    text-decoration: none;
+    position: relative;
+    margin: 0 5px;
+  }
+
+  .breadcrumb a:hover {
+    color: #0056b3;
+  }
+
+  .breadcrumb span {
+    margin: 0 5px;
+    color: #999;
+  }
+
+  .breadcrumb a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #6e6e3a;
+    left: 0;
+    bottom: -2px;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .breadcrumb a:hover::after {
+    transform: scaleX(1);
+  }
+</style>
+
+<main class="main">
+  <div class="page-header breadcrumb-wrap mb-3">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/" rel="nofollow">Home</a>
+        <span></span> <a href="/profile">Profile</a> 
+        <span></span> <a href="/address">My Addresses</a> 
+        <span></span> <%= isEditing ? 'Edit' : 'Add' %> Address
+      </div>
+    </div>
+  </div>
+  
+  <section class="pt-10 pb-10">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 m-auto">
+          <div class="row">
+            <!-- Left Sidebar -->
+            <div class="col-md-4">
+              <div class="dashboard-menu">
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link" href="/profile">
+                      <i class="fi-rs-settings-sliders mr-10"></i>Dashboard
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" href="/address">
+                      <i class="fi-rs-marker mr-10"></i>My Address
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/orders">
+                      <i class="fi-rs-shopping-bag mr-10"></i>Orders
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/wallet">
+                      <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet Status
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/wallet-history">
+                      <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet History
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/referals">
+                      <i class="fi-rs-shopping-cart-check mr-10"></i>Referals
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                      <i class="fi-rs-sign-out mr-10"></i>Logout
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="mb-0"><%= isEditing ? 'Edit' : 'Add New' %> Address</h5>
+                </div>
+                <div class="card-body">
+                  <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                    <div class="alert alert-danger">
+                      <%= errorMessage %>
+                    </div>
+                  <% } %>
+                  
+                  <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+                    <div class="alert alert-success">
+                      <%= successMessage %>
+                    </div>
+                  <% } %>
+                
+                  <form action="<%= isEditing ? '/editAddress?addressId=' + address._id : '/address/save' %>" method="POST">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="addressType">Address Type <span class="required">*</span></label>
+                          <select class="form-select" id="addressType" name="type" required>
+                            <option value="Home" <%= isEditing && address.type === 'Home' ? 'selected' : '' %>>Home</option>
+                            <option value="Work" <%= isEditing && address.type === 'Work' ? 'selected' : '' %>>Work</option>
+                            <option value="Other" <%= isEditing && address.type === 'Other' ? 'selected' : '' %>>Other</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="fullName">Full Name <span class="required">*</span></label>
+                          <input type="text" class="form-control" id="fullName" name="name" value="<%= isEditing ? address.name : '' %>" required>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="streetAddress">Street Address <span class="required">*</span></label>
+                          <input type="text" class="form-control" id="streetAddress" name="street" value="<%= isEditing ? address.street : '' %>" required>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="apartment">Apartment, Suite, etc. (optional)</label>
+                          <input type="text" class="form-control" id="apartment" name="apartment" value="<%= isEditing ? address.apartment || '' : '' %>">
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="city">City <span class="required">*</span></label>
+                          <input type="text" class="form-control" id="city" name="city" value="<%= isEditing ? address.city : '' %>" required>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="state">State/Province <span class="required">*</span></label>
+                          <input type="text" class="form-control" id="state" name="state" value="<%= isEditing ? address.state : '' %>" required>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="zipCode">ZIP/Postal Code <span class="required">*</span></label>
+                          <input type="text" class="form-control" id="zipCode" name="zipCode" value="<%= isEditing ? address.zipCode : '' %>" required>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="country">Country <span class="required">*</span></label>
+                          <select class="form-select" id="country" name="country" required>
+                            <option value="">Select Country</option>
+                            <option value="India" <%= isEditing && address.country === 'India' ? 'selected' : '' %>>India</option>
+                            <!-- Add more countries as needed -->
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="phone">Phone Number (optional)</label>
+                          <input type="tel" class="form-control" id="phone" name="phone" value="<%= isEditing ? address.phone || '' : '' %>">
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="isDefault" name="isDefault" <%= isEditing && address.isDefault ? 'checked' : '' %>>
+                          <label class="form-check-label" for="isDefault">
+                            Set as default address
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mt-3 d-flex justify-content-between">
+                        <a href="/userProfile" class="btn btn-danger ms-2">Cancel</a>
+
+                      
+                        <button type="submit" class="btn btn-success">Save Address</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include("../../views/partials/user/footer") %>

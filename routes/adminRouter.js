@@ -3,11 +3,11 @@ const router= express.Router()
 
 const customerController=require("../controllers/admin/customerController")
 const adminController= require("../controllers/admin/adminController")
-const {userAuth,adminAuth}= require("../middlewares/auth")
+const {adminAuth}= require("../middlewares/auth")
 const categoryController= require("../controllers/admin/categoryController")
 const brandController= require("../controllers/admin/brandController")
 const productController=require("../controllers/admin/productController")
-
+const orderController = require("../controllers/admin/orderController")
 
 
 
@@ -54,7 +54,20 @@ router.get("/products",adminAuth,productController.getAllProducts)
 router.get('/editProduct/:id',adminAuth,productController.getEditProduct)
 router.post('/edit-product', adminAuth, uploads.array('images', 4), productController.updateProduct);
 
+router.get("/block-product/:id", adminAuth, productController.blockProduct);
 
+//  order management
+// router.get('/orders',adminAuth,orderController.getOrders)
+// router.get('/orderList', adminAuth, orderController.listOrders);
+// router.get('/orders/cancelled', adminAuth, orderController.getCancelledOrders);
+// router.get('/orders/:orderId', adminAuth, orderController.getAdminOrderDetails);
+// router.post('/orders/update-status', adminAuth, orderController.updateOrderStatus);
+
+
+
+router.post("/place-order", orderController.placeOrder);
+router.get("/cancel-order/:orderId", orderController.cancelOrder);
+router.get("/return-order-item/:orderId/:productId/:size", orderController.returnOrderItem);
 
 
 module.exports= router

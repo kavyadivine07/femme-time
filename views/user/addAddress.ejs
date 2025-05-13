@@ -1,0 +1,307 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+ .card-green {
+   background-color: #ADD8E6;
+ }
+ .main {
+   padding: 30px 0;
+ }
+
+ .dashboard-menu {
+   background-color: #cce3e6;
+   border-radius: 10px;
+   padding: 15px;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+ }
+
+ .dashboard-menu .nav-link {
+   font-weight: bold;
+   color: #30683c;
+   box-shadow: 0 4px 10px rgba(123, 131, 112, 0.3), 0 4px 20px rgba(0, 191, 255, 0.2);
+   transition: box-shadow 0.3s ease;
+ }
+
+ .dashboard-menu .nav-link:hover {
+   color: #00bfff;
+   box-shadow: 0 4px 15px rgba(173, 255, 47, 0.5), 0 6px 25px rgba(0, 191, 255, 0.4);
+ }
+
+ .card {
+   border-radius: 10px;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+   margin-bottom: 20px;
+ }
+
+ .card-header {
+   background-color: #487379;
+   color: white;
+   border-radius: 10px 10px 0 0;
+ }
+
+ .btn-success {
+   background-color: #577194;
+   border-color: #6bb87d;
+ }
+
+ .btn-success:hover {
+   background-color: #506955;
+ }
+
+ .form-group {
+   margin-bottom: 15px;
+ }
+
+ .required {
+   color: red;
+ }
+
+ .btn-action {
+   padding: 8px 20px;
+   border-radius: 5px;
+   color: white;
+   text-decoration: none;
+   margin-right: 10px;
+   transition: all 0.3s ease;
+ }
+
+ .btn-submit {
+   background-color: #487379;
+ }
+
+ .btn-submit:hover {
+   background-color: #30683c;
+ }
+
+ .btn-cancel {
+   background-color: #6c757d;
+ }
+
+ .btn-cancel:hover {
+   background-color: #5a6268;
+ }
+
+ @media (max-width: 768px) {
+   .dashboard-menu {
+     padding: 10px;
+   }
+
+   .card {
+     margin-bottom: 15px;
+   }
+ }
+ 
+ .page-header.breadcrumb-wrap {
+   background-color: #eee2e9;
+   padding: 15px 0;
+ }
+
+ .breadcrumb {
+   display: flex;
+   align-items: center;
+   font-family: 'Arial', sans-serif;
+   font-size: 16px;
+   color: #121311;
+ }
+
+ .breadcrumb a {
+   color: #007bff;
+   text-decoration: none;
+   position: relative;
+   margin: 0 5px;
+ }
+
+ .breadcrumb a:hover {
+   color: #0056b3;
+ }
+
+ .breadcrumb span {
+   margin: 0 5px;
+   color: #999;
+ }
+
+ .breadcrumb a::after {
+   content: '';
+   position: absolute;
+   width: 100%;
+   height: 2px;
+   background: #6e6e3a;
+   left: 0;
+   bottom: -2px;
+   transform: scaleX(0);
+   transition: transform 0.3s ease;
+ }
+
+ .breadcrumb a:hover::after {
+   transform: scaleX(1);
+ }
+</style>
+
+<main class="main">
+  <div class="page-header breadcrumb-wrap mb-3">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/" rel="nofollow">Home</a>
+        <span></span> <a href="/profile">Profile</a> 
+        <span></span> <a href="/profile/address">Addresses</a>
+        <span></span> Add New Address
+      </div>
+    </div>
+  </div>
+  
+  <section class="pt-10 pb-10">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 m-auto">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="dashboard-menu">
+                <ul class="nav flex-column" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link" href="/profile#dashboard">
+                      <i class="fi-rs-settings-sliders mr-10"></i>Dashboard
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" href="/profile/address">
+                      <i class="fi-rs-marker mr-10"></i>My Address
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/profile#orders">
+                      <i class="fi-rs-shopping-bag mr-10"></i>Orders
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/profile#track-orders">
+                      <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet Status
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/profile#wallet-history">
+                      <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet History
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/profile#referal">
+                      <i class="fi-rs-shopping-cart-check mr-10"></i>Referals
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                      <i class="fi-rs-sign-out mr-10"></i>Logout
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="mb-0">Add New Address</h5>
+                </div>
+                <div class="card-body">
+                  <form action="/addAddress" method="POST">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Address Type <span class="required">*</span></label>
+                          <select class="form-control" name="addressType" required>
+                            <option value="Home">Home</option>
+                            <option value="Work">Work</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Full Name <span class="required">*</span></label>
+                          <input type="text" class="form-control" name="name" required>
+                        </div>
+                      </div>
+
+                      
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Address Line 1 <span class="required">*</span></label>
+                          <input type="text" class="form-control" name="addressLine1" required>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Landmark <span class="required">*</span></label>
+                          <input type="text" class="form-control" name="landMark" required>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Address Line 2</label>
+                          <input type="text" class="form-control" name="addressLine2">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>City <span class="required">*</span></label>
+                          <input type="text" class="form-control" name="city" required>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>State <span class="required">*</span></label>
+                          <input type="text" class="form-control" name="state" required>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Zip Code <span class="required">*</span></label>
+                          <input type="text" class="form-control" name="pincode" required>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Country <span class="required">*</span></label>
+                          <input type="text" class="form-control" name="country" required>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Phone Number</label>
+                          <input type="tel" class="form-control" name="phone">
+                        </div>
+                      </div>
+                      div class="col-md-6">
+                      <div class="form-group">
+                          <label>Alternate Phone Number <span class="required">*</span></label>
+                            <input type="tel" class="form-control" name="altPhone" required>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Is Default Address?</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="isDefault" id="isDefault">
+                            <label class="form-check-label" for="isDefault">
+                              Set as default shipping address
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mt-3">
+                        <div class="d-flex">
+                          <button type="submit" class="btn-action btn-submit">Save Address</button>
+                          <a href="/profile/address" class="btn-action btn-cancel">Cancel</a>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include("../../views/partials/user/footer") %>

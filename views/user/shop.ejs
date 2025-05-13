@@ -1,33 +1,28 @@
 <!DOCTYPE html>
 <html lang="zxx">
-
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="Male_Fashion Template">
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Male-Fashion | Template</title>
+    <title>Femme time</title>
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
-    rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Css Styles -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="css/nice-select.css" type="text/css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="/css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
 </head>
-
 <body>
-    
-<%- include('../partials/user/header') %>
-    <!-- Header Section End -->
+    <%- include('../partials/user/header') %>
 
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
@@ -46,7 +41,7 @@
         </div>
     </section>
     <!-- Breadcrumb Section End -->
-    
+
     <!-- Shop Section Begin -->
     <section class="shop spad">
         <div class="container">
@@ -55,8 +50,17 @@
                 <div class="col-lg-3">
                     <div class="shop__sidebar">
                         <div class="shop__sidebar__search">
-                            <form action="#">
-                                <input type="text" placeholder="Search...">
+                            <form action="/shop" method="GET">
+                                <input type="text" name="search" placeholder="Search..." value="<%= search %>">
+                                <% if (selectedBrand) { %>
+                                    <input type="hidden" name="brand" value="<%= selectedBrand %>">
+                                <% } %>
+                                <% if (selectedCategory) { %>
+                                    <input type="hidden" name="category" value="<%= selectedCategory %>">
+                                <% } %>
+                                <% if (selectedSort) { %>
+                                    <input type="hidden" name="sort" value="<%= selectedSort %>">
+                                <% } %>
                                 <button type="submit"><i class="fa fa-search"></i></button>
                             </form>
                         </div>
@@ -70,10 +74,10 @@
                                         <div class="card-body">
                                             <div class="shop__sidebar__categories">
                                                 <ul class="nice-scroll">
-                                                    <li><a href="/shop">All Products</a></li>
+                                                    <li><a href="/shop?search=<%= search %>&brand=<%= selectedBrand %>&sort=<%= selectedSort %>" <%= !selectedCategory ? 'class="active"' : '' %>>All Categories</a></li>
                                                     <% if(categories && categories.length > 0) { %>
                                                         <% categories.forEach(category => { %>
-                                                            <li><a href="/shop?category=<%= category._id %>"><%= category.name %></a></li>
+                                                            <li><a href="/shop?category=<%= category._id %>&search=<%= search %>&brand=<%= selectedBrand %>&sort=<%= selectedSort %>" <%= selectedCategory === category._id.toString() ? 'class="active"' : '' %>><%= category.name %></a></li>
                                                         <% }); %>
                                                     <% } %>
                                                 </ul>
@@ -89,10 +93,10 @@
                                         <div class="card-body">
                                             <div class="shop__sidebar__brand">
                                                 <ul>
-                                                    <li><a href="/shop">All Brands</a></li>
+                                                    <li><a href="/shop?search=<%= search %>&category=<%= selectedCategory %>&sort=<%= selectedSort %>" <%= !selectedBrand ? 'class="active"' : '' %>>All Brands</a></li>
                                                     <% if(brands && brands.length > 0) { %>
                                                         <% brands.forEach(brand => { %>
-                                                            <li><a href="/shop?brand=<%= brand._id %>"><%= brand.brandName %></a></li>
+                                                            <li><a href="/shop?brand=<%= brand._id %>&search=<%= search %>&category=<%= selectedCategory %>&sort=<%= selectedSort %>" <%= selectedBrand === brand._id.toString() ? 'class="active"' : '' %>><%= brand.brandName %></a></li>
                                                         <% }); %>
                                                     <% } %>
                                                 </ul>
@@ -105,53 +109,53 @@
                     </div>
                 </div>
                 <!-- Sidebar End -->
-    
+
                 <!-- Product Display Begin -->
                 <div class="col-lg-9">
                     <div class="shop__product__option">
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__left">
-                                    <p>Showing <%= products ? products.length : 0 %> results</p>
+                                    <p>Showing <%= products.length %> of <%= totalProducts %> results</p>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__right">
                                     <p>Sort by:</p>
-                                    <select>
-                                        <option value="">Default</option>
-                                        <option value="">Low To High</option>
-                                        <option value="">High To Low</option>
+                                    <select onchange="window.location.href='/shop?page=1&search=<%= search %>&brand=<%= selectedBrand %>&category=<%= selectedCategory %>&sort='+this.value">
+                                        <option value="" <%= selectedSort === '' ? 'selected' : '' %>>Default</option>
+                                        <option value="lowToHigh" <%= selectedSort === 'lowToHigh' ? 'selected' : '' %>>Low To High</option>
+                                        <option value="highToLow" <%= selectedSort === 'highToLow' ? 'selected' : '' %>>High To Low</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Product Display -->
                     <% if(products && products.length > 0) { %>
                     <div class="row product__filter">
                         <% products.forEach(product => { %>
-
-                        <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="col-lg-3 col-md-6 col-sm-6">
                             <div class="product__item">
                                 <div class="product__item__pic">
-                                    <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.productName %>">
-                                    <% if(product.productOffer > 0) { %>
-                                    <span class="label">Sale</span>
+                                    <a href="/productDetails?productId=<%= product._id %>">
+                                        <img src="/Uploads/re-image/<%= product.productImage && product.productImage.length > 0 ? product.productImage[0] : 'placeholder.jpg' %>" alt="<%= product.productName %>">
+                                    </a>
+                                    <% if(product.sizeVariants && product.sizeVariants.length > 0 && product.sizeVariants[0].productOffer > 0) { %>
+                                        <span class="label">Sale</span>
                                     <% } %>
                                     <% if(product.createdAt && (new Date() - new Date(product.createdAt)) / (1000 * 60 * 60 * 24) < 7) { %>
-                                    <span class="label">New</span>
+                                        <span class="label">New</span>
                                     <% } %>
                                     <ul class="product__hover">
-                                        <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                        <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a></li>
-                                        <li><a href="/product/<%= product._id %>"><img src="img/icon/search.png" alt=""></a></li>
+                                        <li><a href="#" onclick="addToWishlist('<%= product._id %>')"><img src="/img/icon/heart.png" alt="Wishlist"></a></li>
+                                        <li><a href="#"><img src="/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
+                                        <li><a href="/productDetails?productId=<%= product._id %>"><img src="/img/icon/search.png" alt="View"></a></li>
                                     </ul>
                                 </div>
                                 <div class="product__item__text">
-                                    <h6><%= product.productName %></h6>
-                                    <a href="#" class="add-cart">+ Add To Cart</a>
+                                    <h6><a href="/productDetails?productId=<%= product._id %>"><%= product.productName %></a></h6>
                                     <div class="rating">
                                         <i class="fa fa-star-o"></i>
                                         <i class="fa fa-star-o"></i>
@@ -160,14 +164,46 @@
                                         <i class="fa fa-star-o"></i>
                                     </div>
                                     <h5>
-                                        <% if(product.productOffer > 0) { %>
-                                        <span class="old-price">$<%= product.regularPrice.toFixed(2) %></span>
-                                        $<%= product.salePrice.toFixed(2) %>
+                                        <% if (product.sizeVariants && product.sizeVariants.length > 0) { %>
+                                            <% const variant = product.sizeVariants[0]; %>
+                                            <% if (variant.productOffer > 0) { %>
+                                                <span class="old-price">₹<%= variant.regularPrice.toFixed(2) %></span>
+                                                ₹<%= variant.salePrice.toFixed(2) %>
+                                            <% } else { %>
+                                                ₹<%= variant.salePrice.toFixed(2) %>
+                                            <% } %>
                                         <% } else { %>
-                                        $<%= product.salePrice.toFixed(2) %>
+                                            Price not available
                                         <% } %>
                                     </h5>
-                                   
+                                    <% if (product.sizeVariants && product.sizeVariants.length > 0) { %>
+                                        <div class="size-circle-container">
+                                            <h6 class="mb-2">Size</h6>
+                                            <div class="size-options">
+                                                <% product.sizeVariants.forEach((variant, index) => { %>
+                                                    <div class="size-circle-wrapper">
+                                                        <input 
+                                                            type="radio" 
+                                                            name="size-<%= product._id %>" 
+                                                            id="size-<%= product._id %>-<%= variant.size %>" 
+                                                            value="<%= variant.size %>" 
+                                                            class="size-radio" 
+                                                            data-product-id="<%= product._id %>"
+                                                            data-price="<%= variant.salePrice.toFixed(2) %>"
+                                                            data-quantity="<%= variant.quantity %>"
+                                                            <%= index === 0 ? 'checked' : '' %>
+                                                        >
+                                                        <label for="size-<%= product._id %>-<%= variant.size %>" class="size-circle">
+                                                            <%= variant.size %>
+                                                        </label>
+                                                    </div>
+                                                <% }); %>
+                                            </div>
+                                        </div>
+                                    <% } else { %>
+                                        <p>No sizes available</p>
+                                    <% } %>
+                                    <button onclick="addToCart('<%= product._id %>')" class="button button-add-to-cart">+ Add To Cart</button>
                                 </div>
                             </div>
                         </div>
@@ -180,17 +216,20 @@
                         </div>
                     </div>
                     <% } %>
-                    
+
                     <!-- Pagination -->
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="product__pagination">
-                                <!-- If using pagination, add page links here -->
-                                <a href="#" class="active">1</a>
-                                <a href="#">2</a>
-                                <a href="#">3</a>
-                                <span>...</span>
-                                <a href="#">6</a>
+                                <% if (currentPage > 1) { %>
+                                    <a href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&brand=<%= selectedBrand %>&category=<%= selectedCategory %>&sort=<%= selectedSort %>">Previous</a>
+                                <% } %>
+                                <% for(let i = 1; i <= totalPages; i++) { %>
+                                    <a href="/shop?page=<%= i %>&search=<%= search %>&brand=<%= selectedBrand %>&category=<%= selectedCategory %>&sort=<%= selectedSort %>" <%= i === currentPage ? 'class="active"' : '' %>><%= i %></a>
+                                <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <a href="/shop?page=<%= currentPage + 1 %>&search=<%= search %>&brand=<%= selectedBrand %>&category=<%= selectedCategory %>&sort=<%= selectedSort %>">Next</a>
+                                <% } %>
                             </div>
                         </div>
                     </div>
@@ -200,73 +239,6 @@
         </div>
     </section>
     <!-- Shop Section End -->
-
-    <!-- Footer Section Begin -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="footer__about">
-                        <div class="footer__logo">
-                            <a href="#"><img src="img/footer-logo.png" alt=""></a>
-                        </div>
-                        <p>The customer is at the heart of our unique business model, which includes design.</p>
-                        <a href="#"><img src="img/payment.png" alt=""></a>
-                    </div>
-                </div>
-                <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
-                    <div class="footer__widget">
-                        <h6>Shopping</h6>
-                        <ul>
-                            <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
-                            <li><a href="#">Sale</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-3 col-sm-6">
-                    <div class="footer__widget">
-                        <h6>Shopping</h6>
-                        <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Delivary</a></li>
-                            <li><a href="#">Return & Exchanges</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
-                    <div class="footer__widget">
-                        <h6>NewLetter</h6>
-                        <div class="footer__newslatter">
-                            <p>Be the first to know about new arrivals, look books, sales & promos!</p>
-                            <form action="#">
-                                <input type="text" placeholder="Your email">
-                                <button type="submit"><span class="icon_mail_alt"></span></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="footer__copyright__text">
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        <p>Copyright ©
-                            <script>
-                                document.write(new Date().getFullYear());
-                            </script>2020
-                            All rights reserved | This template is made with <i class="fa fa-heart-o"
-                            aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                        </p>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- Footer Section End -->
 
     <!-- Search Begin -->
     <div class="search-model">
@@ -280,21 +252,241 @@
     <!-- Search End -->
 
     <!-- Js Plugins -->
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.nice-select.min.js"></script>
-    <script src="js/jquery.nicescroll.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/jquery.countdown.min.js"></script>
-    <script src="js/jquery.slicknav.js"></script>
-    <script src="js/mixitup.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/main.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.nice-select.min.js"></script>
+    <script src="/js/jquery.nicescroll.min.js"></script>
+    <script src="/js/jquery.magnific-popup.min.js"></script>
+    <script src="/js/jquery.countdown.min.js"></script>
+    <script src="/js/jquery.slicknav.js"></script>
+    <script src="/js/mixitup.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
-
+<%- include('../partials/user/footer') %>
 </html>
-
-
 <script>
-  
+document.addEventListener('DOMContentLoaded', function() {
+    const sizeRadios = document.querySelectorAll('.size-radio');
+    
+    sizeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            const selectedPrice = this.getAttribute('data-price');
+            const productId = this.getAttribute('data-product-id');
+            const priceDisplay = this.closest('.product__item__text').querySelector('h5');
+            
+            if (priceDisplay) {
+                const variant = <%- JSON.stringify(products) %>.find(p => p._id === productId).sizeVariants.find(v => v.size === this.value);
+                if (variant.productOffer > 0) {
+                    priceDisplay.innerHTML = `<span class="old-price">₹${variant.regularPrice.toFixed(2)}</span> ₹${variant.salePrice.toFixed(2)}`;
+                } else {
+                    priceDisplay.innerHTML = `₹${variant.salePrice.toFixed(2)}`;
+                }
+            }
+        });
+    });
+});
+
+async function addToCart(productId) {
+    try {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true
+        });
+
+        Toast.fire({
+            icon: 'info',
+            title: 'Adding to cart...'
+        });
+
+        const selectedSizeElement = document.querySelector(`input[name="size-${productId}"]:checked`);
+        if (!selectedSizeElement) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Select Size',
+                text: 'Please select a size before adding to cart.'
+            });
+            return;
+        }
+
+        const selectedSize = selectedSizeElement.value.trim().toUpperCase();
+        const quantity = 1;
+
+        const variants = <%- JSON.stringify(products.map(p => ({ _id: p._id, sizeVariants: p.sizeVariants }))) %>.find(p => p._id === productId).sizeVariants;
+        const selectedVariant = variants.find(variant => variant.size === selectedSize);
+        if (!selectedVariant) {
+            console.error('Invalid size selected:', selectedSize, 'Available sizes:', variants.map(v => v.size));
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Size',
+                text: 'The selected size is not available for this product.'
+            });
+            return;
+        }
+
+        if (!selectedVariant.salePrice || isNaN(selectedVariant.salePrice) || selectedVariant.salePrice <= 0) {
+            console.error('Invalid salePrice:', selectedVariant);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Price',
+                text: 'The product price is invalid.'
+            });
+            return;
+        }
+
+        if (quantity > selectedVariant.quantity) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Out of Stock',
+                text: `Only ${selectedVariant.quantity} items available for size ${selectedSize}.`
+            });
+            return;
+        }
+
+        console.log('Adding to cart:', { productId, size: selectedSize, quantity });
+
+        const response = await fetch('/addToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                productId,
+                size: selectedSize,
+                quantity
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.status === 'already_in_cart') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Already in Cart',
+                    text: 'This item is already in your cart.',
+                    confirmButtonText: 'View Cart',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue Shopping'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/cart';
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added to Cart!',
+                    text: 'Product added to your cart successfully.',
+                    confirmButtonText: 'View Cart',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue Shopping'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/cart';
+                    }
+                });
+            }
+        } else {
+            console.error('Add to cart error:', data.message);
+            if (data.redirect) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Login Required',
+                    text: data.message,
+                    confirmButtonText: 'Login Now',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = data.redirect;
+                    }
+                });
+            } else {
+                throw new Error(data.message);
+            }
+        }
+    } catch (error) {
+        console.error('Add to cart failed:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Something went wrong!'
+        });
+    }
+}
+
+async function addToWishlist(productId) {
+    try {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true
+        });
+
+        Toast.fire({
+            icon: 'info',
+            title: 'Adding to wishlist...'
+        });
+
+        const response = await fetch('/addToWishlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId }),
+            credentials: 'same-origin'
+        });
+
+        const data = await response.json();
+
+        if (data.status) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Added to Wishlist!',
+                text: data.message,
+                confirmButtonText: 'View Wishlist',
+                showCancelButton: true,
+                cancelButtonText: 'Continue Shopping'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/wishlist';
+                }
+            });
+        } else {
+            if (data.redirect) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Login Required',
+                    text: 'Please login to add items to your wishlist',
+                    confirmButtonText: 'Login Now',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = data.redirect;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: data.message
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Add to wishlist failed:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong!'
+        });
+    }
+}
 </script>

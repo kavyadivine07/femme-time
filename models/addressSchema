@@ -4,7 +4,7 @@ const {Schema}= mongoose
 const addressSchema=  new Schema({
     userId:{
         type:Schema.Types.ObjectId,
-        ref:"USer",
+        ref:"User",
         required:true
     },
     address:[{
@@ -45,6 +45,6 @@ const addressSchema=  new Schema({
 })
 
 
-const address=mongoose.model("Address",addressSchema)
+const Address=mongoose.model("Address",addressSchema)
 
 module.exports = Address
